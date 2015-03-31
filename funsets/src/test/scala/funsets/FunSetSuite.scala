@@ -86,7 +86,7 @@ class FunSetSuite extends FunSuite {
    * Once you finish your implementation of "singletonSet", exchange the
    * function "ignore" by "test".
    */
-  ignore("singletonSet(1) contains 1") {
+  test("singletonSet(1) contains 1") {
     
     /**
      * We create a new instance of the "TestSets" trait, this gives us access
@@ -101,7 +101,14 @@ class FunSetSuite extends FunSuite {
     }
   }
 
-  ignore("union contains all elements") {
+  test("singletonSet(2) contains 1") {
+
+    new TestSets {
+      assert(!contains(s2, 1), "Singleton")
+    }
+  }
+
+  test("union contains all elements") {
     new TestSets {
       val s = union(s1, s2)
       assert(contains(s, 1), "Union 1")
@@ -109,4 +116,62 @@ class FunSetSuite extends FunSuite {
       assert(!contains(s, 3), "Union 3")
     }
   }
+
+  test("intersect contains one element") {
+    new TestSets {
+      val s = intersect(s1, s1)
+      assert(contains(s, 1))
+      assert(!contains(s, 2))
+      assert(!contains(s, 3))
+    }
+  }
+
+  test("intersect contains all elements"){
+    val s = intersect(union(singletonSet(1), singletonSet(2)), singletonSet(1))
+    assert(contains(s, 1))
+  }
+
+  test("diff contains only one element"){
+    val s = diff(union(singletonSet(1), singletonSet(2)), singletonSet(1))
+    assert(!contains(s, 1))
+    assert(contains(s, 2))
+  }
+
+  test("filter returns set with only one element"){
+    val s = filter(union(singletonSet(2), singletonSet(1)), x => x + x == 4)
+    assert(!contains(s, 1))
+    assert(contains(s, 2))
+  }
+
+  test("filter returns set with no elements"){
+    val s = filter(union(singletonSet(2), singletonSet(1)), x => x + x == 6)
+    assert(!contains(s, 1))
+    assert(!contains(s, 2))
+  }
+  
+  test("forAll passes"){
+    assert(forall(union(singletonSet(2), singletonSet(2)), x => x + x == 4))
+    assert(forall(union(singletonSet(1), singletonSet(0)), x => x >= 0))
+    assert(!forall(union(singletonSet(1), singletonSet(-2)), x => x >= 0))
+  }
+
+  test("exist passes"){
+    assert(exists(union(singletonSet(2), singletonSet(2)), x => x + x == 4))
+    assert(exists(union(singletonSet(1), singletonSet(-2)), x => x >= 0))
+    assert(!exists(union(singletonSet(-11), singletonSet(-2)), x => x >= 0))
+  }
+
+  test("map one element"){
+    assert(contains(map(singletonSet(2), x => x + x), 4))
+    assert(!contains(map(singletonSet(1), x => x + x), 4))
+  }
+
+  test("map many elements"){
+    assert(contains(map(union(singletonSet(2), singletonSet(1)), x => x + x), 4))
+    assert(contains(map(union(singletonSet(2), singletonSet(1)), x => x + x), 2))
+    assert(!contains(map(union(singletonSet(2), singletonSet(1)), x => x + x), 1))
+    assert(!contains(map(union(singletonSet(2), singletonSet(3)), x => x + x), 2))
+    assert(!contains(map(union(singletonSet(2), singletonSet(1)), x => x + x), 3))
+  }
+
 }
